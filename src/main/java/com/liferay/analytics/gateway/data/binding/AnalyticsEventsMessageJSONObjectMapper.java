@@ -21,6 +21,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liferay.analytics.gateway.model.AnalyticsEventsMessage;
 
@@ -52,6 +53,9 @@ public class AnalyticsEventsMessageJSONObjectMapper
 
 		_objectMapper.addMixIn(
 			AnalyticsEventsMessage.Event.class, EventMixIn.class);
+
+		_objectMapper.configure(
+			DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
 	private static final class AnalyticsEventsMessageMixIn {
