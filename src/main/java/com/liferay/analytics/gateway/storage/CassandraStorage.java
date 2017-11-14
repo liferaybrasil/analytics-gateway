@@ -70,15 +70,16 @@ public class CassandraStorage {
 
 			batch.add(
 				createInsertStatement(
-					event.getApplicationId(),
-					analyticsEventsMessage.getAnalyticsKey(),
-					event.getEventId(), now, event.getProperties()));
+					now, analyticsEventsMessage.getAnalyticsKey(),
+					event.getApplicationId(), event.getEventId(),
+					analyticsEventsMessage.getContext(),
+					event.getProperties()));
 		}
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
 				String.format(
-					"Batched %d events for insertion.",
+					"Batched %d event(s) for insertion.",
 					batch.getStatements().size()));
 		}
 
@@ -86,17 +87,19 @@ public class CassandraStorage {
 	}
 
 	protected Statement createInsertStatement(
-		String applicationId, String analyticskey, String eventId, Date date,
+		Date createDate, String analyticskey, String applicationId,
+		String eventId, Map<String, String> context,
 		Map<String, String> properties) {
 
 		PreparedStatement ps = _session.prepare(
 			"insert into Analytics.AnalyticsEvent ( " +
-    			"partitionKey, analyticskey, applicationid, eventid, " +
-					"createdate, eventproperties) values (?, ?, ?, ?, ?, ?) ");
+    			"partitionKey, createdate, analyticskey, applicationid, " +
+					"eventid, context, eventproperties) values (?, ?, ?, " +
+    					"?, ?, ?, ?) ");
 
     	return ps.bind(
-			getPartitionKey(date), analyticskey, applicationId, eventId, date,
-			properties);
+			getPartitionKey(createDate), createDate, analyticskey,
+			applicationId, eventId, context, properties);
 	}
 
 	protected String getPartitionKey(Date createDate) {
