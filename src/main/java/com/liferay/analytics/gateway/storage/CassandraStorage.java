@@ -43,16 +43,16 @@ public class CassandraStorage {
 
 	@PostConstruct
 	protected void activate() {
-		_cluster = Cluster.builder()
-						  .addContactPoint(_node)
-						  .withPort(_port)
-						  .build();
+
+		_cluster =
+			Cluster.builder().addContactPoint(_node).withPort(_port).build();
 
 		_session = _cluster.connect();
 	}
 
 	@PreDestroy
 	protected void deactivate() {
+
 		_session.close();
 
 		_cluster.close();
@@ -65,8 +65,7 @@ public class CassandraStorage {
 
 		Date now = new Date();
 
-		for (AnalyticsEventsMessage.Event event :
-				analyticsEventsMessage.getEvents()) {
+		for (AnalyticsEventsMessage.Event event : analyticsEventsMessage.getEvents()) {
 
 			batch.add(
 				createInsertStatement(
@@ -103,6 +102,7 @@ public class CassandraStorage {
 	}
 
 	protected String getPartitionKey(Date createDate) {
+
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-");
 
 		Calendar calendar = Calendar.getInstance();
@@ -115,11 +115,12 @@ public class CassandraStorage {
 	}
 
 	public Session getSession() {
+
 		return _session;
 	}
 
-	private static final Logger _log = LoggerFactory.getLogger(
-		CassandraStorage.class);
+	private static final Logger _log =
+		LoggerFactory.getLogger(CassandraStorage.class);
 
 	@Value("${analytics.gateway.cassandra.node}")
 	private String _node;

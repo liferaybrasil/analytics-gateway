@@ -40,7 +40,9 @@ public class AnalyticsEventsMessageJSONObjectMapper
 	}
 
 	@Override
-	public AnalyticsEventsMessage map(String jsonString) throws IOException {
+	public AnalyticsEventsMessage map(String jsonString)
+		throws IOException {
+
 		return _objectMapper.readValue(
 			jsonString, AnalyticsEventsMessage.class);
 	}

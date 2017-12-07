@@ -1,7 +1,3 @@
-package com.liferay.analytics.gateway.data.binding;
-
-import java.io.IOException;
-
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -16,13 +12,19 @@ import java.io.IOException;
  * details.
  */
 
+package com.liferay.analytics.gateway.data.binding;
+
+import java.io.IOException;
+
 /**
  * @author Marcellus Tavares
  */
 public interface JSONObjectMapper<T> {
 
-	public T map(String json) throws IOException;
+	public T map(String json)
+		throws IOException;
 
-	public String map(T t) throws IOException;
+	public String map(T t)
+		throws IOException;
 
 }
