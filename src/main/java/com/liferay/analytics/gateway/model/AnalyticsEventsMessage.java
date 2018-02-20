@@ -15,8 +15,10 @@
 package com.liferay.analytics.gateway.model;
 
 import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,40 +30,44 @@ import java.util.Map;
 public final class AnalyticsEventsMessage implements Serializable {
 
 	public static AnalyticsEventsMessage.Builder builder(
+		AnalyticsEventsMessage analyticsEventsMessage) {
+
+		return new AnalyticsEventsMessage.Builder(analyticsEventsMessage);
+	}
+
+	public static AnalyticsEventsMessage.Builder builder(String analyticsKey) {
+		return new AnalyticsEventsMessage.Builder(analyticsKey);
+	}
+
+	public static AnalyticsEventsMessage.Builder builder(
 		String analyticsKey, String userId) {
 
 		return new AnalyticsEventsMessage.Builder(analyticsKey, userId);
 	}
 
 	public String getAnalyticsKey() {
-
 		return _analyticsKey;
 	}
 
 	public Map<String, String> getContext() {
-
 		return Collections.unmodifiableMap(_context);
 	}
 
 	public List<Event> getEvents() {
-
 		return _events;
 	}
 
 	public String getProtocolVersion() {
-
 		return _protocolVersion;
 	}
 
 	public String getUserId() {
-
 		return _userId;
 	}
 
 	public static final class Builder {
 
 		public AnalyticsEventsMessage build() {
-
 			if (_analyticsEventsMessage._events.size() == 0) {
 				throw new IllegalStateException(
 					"The message should contain at least one event");
@@ -71,35 +77,57 @@ public final class AnalyticsEventsMessage implements Serializable {
 		}
 
 		public Builder context(Map<String, String> context) {
-
 			_analyticsEventsMessage._context = context;
 
 			return this;
 		}
 
 		public Builder contextProperty(String key, String value) {
-
 			_analyticsEventsMessage._context.put(key, value);
 
 			return this;
 		}
 
 		public Builder event(Event event) {
-
 			_analyticsEventsMessage._events.add(event);
 
 			return this;
 		}
 
 		public Builder protocolVersion(String protocolVersion) {
-
 			_analyticsEventsMessage._protocolVersion = protocolVersion;
 
 			return this;
 		}
 
-		protected Builder(String analyticsKey, String userId) {
+		public Builder userId(String userId) {
+			_analyticsEventsMessage._userId = userId;
 
+			return this;
+		}
+
+		protected Builder(AnalyticsEventsMessage analyticsEventsMessage) {
+			_analyticsEventsMessage._analyticsKey =
+				analyticsEventsMessage.getAnalyticsKey();
+
+			_analyticsEventsMessage._context =
+				analyticsEventsMessage.getContext();
+
+			_analyticsEventsMessage._events =
+				analyticsEventsMessage.getEvents();
+
+			_analyticsEventsMessage._protocolVersion =
+				analyticsEventsMessage.getProtocolVersion();
+
+			_analyticsEventsMessage._userId =
+				analyticsEventsMessage.getUserId();
+		}
+
+		protected Builder(String analyticsKey) {
+			_analyticsEventsMessage._analyticsKey = analyticsKey;
+		}
+
+		protected Builder(String analyticsKey, String userId) {
 			_analyticsEventsMessage._analyticsKey = analyticsKey;
 			_analyticsEventsMessage._userId = userId;
 		}
@@ -109,7 +137,7 @@ public final class AnalyticsEventsMessage implements Serializable {
 
 	}
 
-	public static final class Event {
+	public static final class Event implements Serializable {
 
 		public static Event.Builder builder(
 			String applicationId, String eventId) {
@@ -118,43 +146,40 @@ public final class AnalyticsEventsMessage implements Serializable {
 		}
 
 		public String getApplicationId() {
-
 			return _applicationId;
 		}
 
-		public String getEventId() {
+		public Date getEventDate() {
+			return new Date(_eventDate.getTime());
+		}
 
+		public String getEventId() {
 			return _eventId;
 		}
 
 		public Map<String, String> getProperties() {
-
 			return Collections.unmodifiableMap(_properties);
 		}
 
 		public static final class Builder {
 
 			public AnalyticsEventsMessage.Event build() {
-
 				return _event;
 			}
 
 			public Event.Builder properties(Map<String, String> properties) {
-
 				_event._properties = properties;
 
 				return this;
 			}
 
 			public Event.Builder property(String key, String value) {
-
 				_event._properties.put(key, value);
 
 				return this;
 			}
 
 			protected Builder(String applicationId, String eventId) {
-
 				_event._applicationId = applicationId;
 				_event._eventId = eventId;
 			}
@@ -165,17 +190,16 @@ public final class AnalyticsEventsMessage implements Serializable {
 		}
 
 		private Event() {
-
 		}
 
 		private String _applicationId;
+		private Date _eventDate = new Date();
 		private String _eventId;
 		private Map<String, String> _properties = new HashMap<>();
 
 	}
 
 	private AnalyticsEventsMessage() {
-
 	}
 
 	private String _analyticsKey;

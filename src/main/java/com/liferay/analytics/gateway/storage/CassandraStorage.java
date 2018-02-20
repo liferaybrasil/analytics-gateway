@@ -71,6 +71,7 @@ public class CassandraStorage {
 				createInsertStatement(
 					now, analyticsEventsMessage.getAnalyticsKey(),
 					event.getApplicationId(), event.getEventId(),
+					event.getEventDate(),
 					analyticsEventsMessage.getContext(), event.getProperties(),
 					analyticsEventsMessage.getUserId()));
 		}
@@ -87,18 +88,18 @@ public class CassandraStorage {
 
 	protected Statement createInsertStatement(
 		Date createDate, String analyticskey, String applicationId,
-		String eventId, Map<String, String> context,
+		String eventId, Date eventdate, Map<String, String> context,
 		Map<String, String> properties, String userId) {
 
 		PreparedStatement ps = _session.prepare(
 			"insert into Analytics.AnalyticsEvent ( " +
-				"partitionKey, createdate, analyticskey, applicationid, " +
-				"eventid, context, eventproperties, userid) values (?, " +
-				"?, ?, ?, ?, ?, ?, ?) ");
+				"partitionKey, createdate, applicationid, analyticskey," +
+				"eventid, eventdate, context, eventproperties, userid) " +
+				"values (?, ?, ?, ?, ?, ?, ?, ? ,?) ");
 
 		return ps.bind(
 			getPartitionKey(createDate), createDate, analyticskey,
-			applicationId, eventId, context, properties, userId);
+			applicationId, eventId, eventdate, context, properties, userId);
 	}
 
 	protected String getPartitionKey(Date createDate) {
